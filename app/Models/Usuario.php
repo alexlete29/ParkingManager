@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Usuario extends Model
 {
+
     use HasFactory;
+    protected $fillable = ['nombre', 'dni'];
+
+    public function coches(){
+        return $this->hasMany('App\Models\Coche');
+    }
 }

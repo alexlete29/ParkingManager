@@ -14,7 +14,8 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        //
+        $usuarios = DB::table('usuarios')->get();
+        return view('usuario', ['array'=>$usuarios]);
     }
 
     /**
