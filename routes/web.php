@@ -26,4 +26,11 @@ Route::post('/coches/find',[CocheController::class,'busqueda'])->name('coches.bu
 
 Route::resource('coches',CocheController::class);
 
-
+Route::controller(UsuarioController::class)->group(function()
+{
+    Route::get('/usuario','devolverUser')->name('inserta2');
+    Route::get('/asignar','devolverAsignar');
+    Route::get('/relacion', 'usuarioRelacionado');
+    Route::post('/asignado', 'asignar');
+    Route::delete('/borrar/{id}/usr', 'borrarPersona');
+});

@@ -3,84 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Models\Coche;
+
+
 use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $usuarios = DB::table('usuarios')->get();
-        return view('usuario', ['array'=>$usuarios]);
-    }
+ function devolverUser()
+ {
+    $usuario = DB::table('usuarios')->get();
+    return view('usuario',['array'=>$usuario]);
+ }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+ function usuarioRelacionado()
+ {
+    $coches = Coche::where('userid')->get();
+    $usuarios = Usuario::get();
+    return view('relacion',['arrayCoche'=>$coches], ['arrayUsuario'=>$usuarios]);
+ }
+ function asignar (Request $request)
+ {
+    $iduser = $request->get('select1');
+    $idcoche = $request->get('select2');
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    $user = Usuario::findOrFail($idcoche);
+    $coche = Coche::findOrFail($iduser);
+    $coche->update(['userid' => $user->id]);
+    return redirect()->route('listaAsignado');
+ }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Usuario $usuario)
-    {
-        //
-    }
+ function borrarPersona ($id)
+ {
+    $user = Usuario::find($id);
+    $user->delete();
+    return redirect()->route('inserta2');
+ }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Usuario $usuario)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Usuario $usuario)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Usuario $usuario)
-    {
-        //
-    }
+ function devolverAsignar()
+ {
+    $user = DB::table('usuarios')->get();
+    $coches = DB::table('coches')->get();
+    return view('asignar', ['arrayUsuario'=>$user],['arrayCoche'=>$coches]);
+ }
 }
