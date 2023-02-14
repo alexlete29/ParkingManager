@@ -14,6 +14,10 @@ class CocheSeeder extends Seeder
      */
     public function run()
     {
-        //
+        DB::table('coche')->insert([
+            'matricula'=>'8378GSK',
+            'marca'=>'Peugeot',
+            'modelo'=>'308',
+        ]);
     }
 }

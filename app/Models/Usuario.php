@@ -12,6 +12,6 @@ class Usuario extends Model
     protected $fillable = ['nombre', 'dni'];
 
     public function coches(){
-        return $this->hasMany('App\Models\Coche');
+        return $this->hasMany(Coche::class, 'user_id');
     }
 }
