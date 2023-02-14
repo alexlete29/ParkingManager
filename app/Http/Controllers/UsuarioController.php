@@ -2,48 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
-use App\Models\Coche;
-
-
 use Illuminate\Http\Request;
+use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {
- function devolverUser()
- {
-    $usuario = DB::table('usuarios')->get();
-    return view('usuario',['array'=>$usuario]);
- }
 
- function usuarioRelacionado()
- {
-    $coches = Coche::where('userid')->get();
-    $usuarios = Usuario::get();
-    return view('relacion',['arrayCoche'=>$coches], ['arrayUsuario'=>$usuarios]);
- }
- function asignar (Request $request)
- {
-    $iduser = $request->get('select1');
-    $idcoche = $request->get('select2');
+    public function inicio(){
 
-    $user = Usuario::findOrFail($idcoche);
-    $coche = Coche::findOrFail($iduser);
-    $coche->update(['userid' => $user->id]);
-    return redirect()->route('listaAsignado');
- }
+        $usuarios = Usuario::all();
 
- function borrarPersona ($id)
- {
-    $user = Usuario::find($id);
-    $user->delete();
-    return redirect()->route('inserta2');
- }
+        return view('crearUsuario', ['usuarios' => $usuarios]);
+    }
+    public function crearUsuario(Request $request){
 
- function devolverAsignar()
- {
-    $user = DB::table('usuarios')->get();
-    $coches = DB::table('coches')->get();
-    return view('asignar', ['arrayUsuario'=>$user],['arrayCoche'=>$coches]);
- }
+        $request->validate([
+            'name' => 'required',
+            'apellido' => 'required',
+            'email' => 'required'
+        ]);
+
+        $usuario = new Usuario;
+        $usuario->name = $request -> name;
+        $usuario->apellido = $request -> apellido;
+        $usuario->email = $request -> email;
+
+        $usuario->save();
+        return redirect('/usuario');
+    }
 }

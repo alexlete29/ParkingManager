@@ -2,137 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Usuario;
 use App\Models\Coche;
 use Illuminate\Http\Request;
-use Symfony\Contracts\Service\Attribute\Required;
-
 
 class CocheController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $datos['coches'] = Coche::all();
-        return view('archivos.inicio',$datos);
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('archivos.ingresa');
-    }
+    public function eleminarCoche($id){
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-
-        $campos = [
-            'matricula' => 'required|string|max:10',
-            'marca' => 'required|alpha|max:20',
-            'modelo' => 'required|string|max:20',
-        ];
-
-        $mensaje = [
-            'required' => ':attribute vacio o incorrecto'
-        ];
-
-        $this->validate($request,$campos,$mensaje);
-
-        $datosCoche = request()->except('_token');
-        Coche::create($datosCoche);
-        return redirect('coches')->with('mensaje','Coche añadido');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function show()
-    {
-        $datos['coches'] = Coche::all();
-
-        return view('archivos.lista',$datos);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $coche = Coche::findOrFail($id);
-        return view('archivos.editarDatos',compact('coche'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $campos = [
-            'matricula' => 'required|string|max:10',
-            'marca' => 'required|alpha|max:20',
-            'modelo' => 'required|string|max:20',
-        ];
-
-        $mensaje = [
-            'required' => ':attribute vacio o incorrecto'
-        ];
-
-        $this->validate($request,$campos,$mensaje);
-
-        $datosCoche = request()->except(['_token','_method']);
-        Coche::where('id','=',$id)->update($datosCoche);
-
-        $coche = Coche::findOrFail($id);
-        return redirect('coches')->with('mensaje','Coche editado');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
         Coche::destroy($id);
-        return redirect('coches')->with('mensaje','Coche borrado');
+        return redirect('/');
+    }
+    
+
+    public function nuevoCoche(Request $request){
+
+
+        $coches = $request->except("_token");
+
+        if($request->get('buscador')){
+            $coches = Coche::where("matricula", "LIKE", "%{$request->get('buscador')}%")->get();
+          return view('listaCoches')->with('coches', $coches);
+        }
+
+        $coches = Coche::all();
+        $usuarios = Usuario::all();
+        return view('nuevoCoche', ['coches' => $coches] , ['usuarios' => $usuarios]);
     }
 
-    public function buscar(){
-       
-        return view('archivos.buscar');
+    public function store (Request $request){
+
+        $request->validate([
+            'matricula' => 'required|max:7|regex:/[0-9][A-Z]{3}/',
+            'marca' => 'required|min:3|max:15',
+            'modelo' => 'required|min:1|max:15'
+        ]);
+
+        $coches = new Coche;
+        $coches -> matricula = $request -> matricula;
+        $coches -> marca = $request -> marca;
+        $coches -> modelo = $request -> modelo;
+        $coches -> user_id = $request -> user_id;
+        $coches -> save();
+
+        return redirect('/');
     }
 
-    public function busqueda(Request $request){
 
-        $datosCoche = request()->except(['_token']);
-        $datosMatricula = substr($datosCoche['matricula'], 0, 3);
-        $datos['coches'] = Coche::where('matricula','like',$datosMatricula . '%')->get();
-
-        return view('archivos.buscar',$datos);
-    }
 }
-

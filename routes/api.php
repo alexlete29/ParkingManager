@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Usuario;
+use App\Models\Coche;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +18,24 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('/usuario/coche', function(){
+    $usuarios = Usuario::all();
+
+        $coche = Coche::where('user_id', $usuarios->id)->get();
+        return $coche;
+});
+
+Route::get('/usuario/{id}', function($id){
+    $usuario = Usuario::find($id);
+    return $usuario;
+});
+
+Route::get('/coche/ultimo', function(){
+    $coche = Coche::where('created_at', '<', now())
+    ->limit(10)
+    ->orderBy('created_at', 'DESC')
+    ->get();
+    return $coche;
 });

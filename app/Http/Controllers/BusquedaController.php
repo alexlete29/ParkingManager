@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Usuario;
 use App\Models\Coche;
 use Illuminate\Http\Request;
 
@@ -11,14 +11,14 @@ class BusquedaController extends Controller
     public function inicio(){
 
         $coches = Coche::all();
-        $usuarios = User::all();  
+        $usuarios = Usuario::all();  
 
         return view('busqueda', ['coches' => $coches] , ['usuarios' => $usuarios]);
     }
 
     public function buscar(Request $request){
 
-        $usuarios = User::all();  
+        $usuarios = Usuario::all();  
 
         $coches = $request->except("_token");
 
@@ -33,7 +33,7 @@ class BusquedaController extends Controller
 
     public function listaCocheUsuario(Request $request){
 
-        $usuarios = User::all(); 
+        $usuarios = Usuario::all(); 
         $coches = Coche::all();
 
         if($request->get('users')){

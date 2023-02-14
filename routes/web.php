@@ -16,21 +16,21 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/',function(){
-return redirect('coches');
-});
-   
-Route::get('/coches/buscar',[CocheController::class,'buscar'])->name('coches.buscar');
+Route::post('/coche', [CocheController::class, 'store']);
+Route::get('/', [CocheController::class, 'nuevoCoche']);
+Route::delete('/coche/{id}', [CocheController::class, 'eleminarCoche']);
 
-Route::post('/coches/find',[CocheController::class,'busqueda'])->name('coches.busqueda');
 
-Route::resource('coches',CocheController::class);
+Route::get('/usuario' , [UsuarioController::class, 'inicio']);
+Route::post('/crearUsuario' , [UsuarioController::class, 'crearUsuario']);
 
-Route::controller(UsuarioController::class)->group(function()
-{
-    Route::get('/usuario','devolverUser')->name('inserta2');
-    Route::get('/asignar','devolverAsignar');
-    Route::get('/relacion', 'usuarioRelacionado');
-    Route::post('/asignado', 'asignar');
-    Route::delete('/borrar/{id}/usr', 'borrarPersona');
-});
+
+Route::get('/inicioAsignar' , [AsignarController::class, 'inicio']);
+Route::post('/asignar' , [AsignarController::class, 'asignar']);
+
+Route::get('/inicioBusqueda' , [BusquedaController::class, 'inicio']);
+Route::get('/busqueda' , [BusquedaController::class, 'buscar']);
+Route::get('/listaCocheUsuario' , [BusquedaController::class, 'listaCocheUsuario']);
+
+Route::get('/inicioMatricula', [BusquedaController::class, 'mostrar']);
+Route::get('/matricula', [BusquedaController::class, 'matricula']);
